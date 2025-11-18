@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  user-db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: userdb
+    ports:
+      - "5433:5432"
+
+  post-db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postdb
+    ports:
+      - "5434:5432"
+
+  user-service:
+    build:
+      context: ../user-service   # 👈 folder that contains Dockerfile
+      # dockerfile: Dockerfile   # optional, Docker uses this by default
+    environment:
+      USER_DB_URL: postgresql://user:password@user-db:5432/userdb
+    depends_on:
+      - user-db
+
+  post-service:
+    build:
+      context: ../post-service   # 👈 NOT ../post-service/post-service, NOT "post-service"
+      # dockerfile: Dockerfile
+    environment:
+      POST_DB_URL: postgresql://user:password@post-db:5432/postdb
+      USER_SERVICE_ADDR: user-service:50051
+    depends_on:
+      - post-db
+      - user-service
+
+  api-gateway:
+    build:
+      context: ../api-gateway    # 👈 folder that contains Dockerfile
+      # dockerfile: Dockerfile
+    environment:
+      USER_SERVICE_ADDR: user-service:50051
+      POST_SERVICE_ADDR: post-service:50052
+    ports:
+      - "8000:8000"
+    depends_on:
+      - user-service
+      - post-service
