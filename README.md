@@ -15,16 +15,13 @@ This project demonstrates how modern backend systems structure independent servi
 ## 🏗 Architecture Overview
 
 ```mermaid
-flowchart LR
-    A[Client / curl / Frontend] --> B(API Gateway - FastAPI)
-
-    B -->|gRPC| C(User Service)
-    B -->|gRPC| D(Post Service)
-
-    C -->|SQL| E[(user-db - Postgres)]
-    D -->|SQL| F[(post-db - Postgres)]
-
-    D -->|gRPC (validate user)| C
+graph LR
+    client[Client / curl / Frontend] --> gateway[API Gateway (FastAPI)]
+    gateway -->|gRPC| usersvc[User Service]
+    gateway -->|gRPC| postsvc[Post Service]
+    usersvc -->|SQL| userdb[(user-db)]
+    postsvc -->|SQL| postdb[(post-db)]
+    postsvc -->|gRPC validate user| usersvc
 ```
 
 ---
