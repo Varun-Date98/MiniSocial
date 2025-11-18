@@ -16,12 +16,12 @@ This project demonstrates how modern backend systems structure independent servi
 
 ```mermaid
 graph LR
-    client[Client / curl / Frontend] --> gateway[API Gateway (FastAPI)]
+    client[Client / Frontend] --> gateway[API Gateway]
     gateway -->|gRPC| usersvc[User Service]
     gateway -->|gRPC| postsvc[Post Service]
-    usersvc -->|SQL| userdb[(user-db)]
-    postsvc -->|SQL| postdb[(post-db)]
-    postsvc -->|gRPC validate user| usersvc
+    usersvc -->|SQL| userdb[User Database]
+    postsvc -->|SQL| postdb[Post Database]
+    postsvc -->|gRPC: validate user| usersvc
 ```
 
 ---
